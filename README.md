@@ -137,3 +137,18 @@ In other words, without having to write any explicit code, Spring will:
 - Instantiate them and inject any specified dependencies into them.
 - Inject them wherever needed.
 ```
+
+#Dependency Usages and Explanation
+```$xslt
+<dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+
+This library provides validation annotations.
+Example: 
+import javax.validation.constraints.Size;
+
+@Size(max = 30)
+private String name; //maximum number of character can be used for this column
+```
