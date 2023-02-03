@@ -69,10 +69,14 @@ In this project I've created a new project from Spring Boot website. You may als
 **Add DataSource config into application.properties:**
 
 ```$xslt
-spring.datasource.url=jdbc:mysql://localhost:3306/lpd
+spring.datasource.url=jdbc:mysql://localhost:3306/db_name?useSSL=false
 spring.datasource.username=root
-spring.datasource.password=rootX663
+spring.datasource.password=root_password
 spring.jpa.show-sql=true
+
+///Note: Below lines help to Create, Update, Delete table autometically
+spring.jpa.database-platform=org.hibernate.dialect.MySQL5InnoDBDialect
+spring.jpa.hibernate.ddl-auto=update
 ```
 
 **MySQL database in terminal: (commands)**
