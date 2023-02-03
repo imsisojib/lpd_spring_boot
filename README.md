@@ -53,7 +53,7 @@ In this project I've created a new project from Spring Boot website. You may als
    PostgreSQL Driver (used)<br>
 7. Now Generate and Download the zip file.
 
-#MySQL Setup
+## MySQL Setup
 - Download MySql Server
 - setup root and password
 
@@ -90,7 +90,7 @@ use database_name ; // to use database
 show tables ; // to show all tables within database
 ```
 
-#Annotations in Spring Boot
+## Annotations in Spring Boot
 
 **@Controller**
 ```$xslt
@@ -142,7 +142,8 @@ In other words, without having to write any explicit code, Spring will:
 - Inject them wherever needed.
 ```
 
-#Dependency Usages and Explanation
+## Dependency Usages and Explanation
+**spring-boot-starter-validation**
 ```$xslt
 <dependency>
    <groupId>org.springframework.boot</groupId>
@@ -155,4 +156,57 @@ import javax.validation.constraints.Size;
 
 @Size(max = 30)
 private String name; //maximum number of character can be used for this column
+```
+
+## Entity Relationship
+### BEFORE DEEP DIVE
+Let's see some use cases of difference relation helpers<br>
+
+--> **What is 'CASCADE'?** <br>
+CASCADE in SQL is used to simultaneously delete or update an entry from both the child and parent table. The keyword CASCADE is used as a conjunction while writing the query of ON DELETE or ON UPDATE.<br>
+Example: 
+```$xslt
+CascadeType.ALL
+//perform all types of actions
+//constrained with Owner-Table.
+//If you want to delete Reference-Table row then you must delete Owner-Table referenced row first.
+
+CascadeType.REMOVE: When deleting an entity, it also deletes the entities held in this field.
+
+CascadeType.REFRESH: When refreshing an entity, also refresh the entities held in this field.
+
+CascadeType.MERGE: When merging entity state, also merge the entities held in this field.
+
+```
+
+### OneToOne Uni-Directional Relation
+In this type of entity relation Owner-Table contains a ForeignKey column of Reference Table.
+Example:
+```$xslt
+
+@Entity
+class User{
+   int id;
+   String name;
+   
+   @OneToOne(cascade = CascadeType.ALL)
+   Address address;
+}
+
+@Entity
+class Address{
+   int id;
+   String info;
+}
+
+DONE. 
+```
+
+As there is no defined Column name for ForeignKey, so in User table a additional column will be added, name will be: [REFERENCE_TABLE_NAME+REFENCE_TABLE_PK_NAME]=> address_id. <br>
+TO CHANGE/DEFINE CUSTOM COLUMN_NAME:
+```$xslt@Entity
+@OneToOne(cascade = CascadeType.ALL)
+@JoinColumn(  name = "fk_address_id", referencedColumnName = "id")
+
+DONE.
 ```
