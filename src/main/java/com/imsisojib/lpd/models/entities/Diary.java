@@ -1,5 +1,7 @@
 package com.imsisojib.lpd.models.entities;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -16,6 +18,7 @@ public class Diary {
     private String deviceName;
     private String modelName;
     private String brand;
+    @CreatedDate
     private Timestamp createdDate;
     private Timestamp lostDate;
 
@@ -23,17 +26,21 @@ public class Diary {
     @JoinColumn(name = "fk_lost_address_id")
     private Address lostAddress;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_owner_id", referencedColumnName = "phoneNumber")
+    private User owner;
+
     public Diary() {
     }
 
-    public Diary(String emi, String deviceName, String modelName, String brand, Timestamp createdDate, Timestamp lostDate, Address lostAddress) {
+    public Diary(String emi, String deviceName, String modelName, String brand, Timestamp lostDate, Address lostAddress, User owner) {
         this.emi = emi;
         this.deviceName = deviceName;
         this.modelName = modelName;
         this.brand = brand;
-        this.createdDate = createdDate;
         this.lostDate = lostDate;
         this.lostAddress = lostAddress;
+        this.owner = owner;
     }
 
     public String getEmi() {
@@ -90,5 +97,13 @@ public class Diary {
 
     public void setLostAddress(Address lostAddress) {
         this.lostAddress = lostAddress;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }
