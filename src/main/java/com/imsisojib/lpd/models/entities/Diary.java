@@ -1,11 +1,12 @@
 package com.imsisojib.lpd.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 @Entity
 @Table(name = "diaries", uniqueConstraints = {
@@ -19,28 +20,29 @@ public class Diary {
     private String modelName;
     private String brand;
     @CreatedDate
-    private Timestamp createdDate;
-    private Timestamp lostDate;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private Date createdDate;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private Date lostDate;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_lost_address_id")
     private Address lostAddress;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_owner_id", referencedColumnName = "phoneNumber")
-    private User owner;
+    @Column(name = "fk_owner_id")
+    private String ownerId;
 
     public Diary() {
     }
 
-    public Diary(String emi, String deviceName, String modelName, String brand, Timestamp lostDate, Address lostAddress, User owner) {
+    public Diary(String emi, String deviceName, String modelName, String brand, Date lostDate, Address lostAddress, String ownerId) {
         this.emi = emi;
         this.deviceName = deviceName;
         this.modelName = modelName;
         this.brand = brand;
         this.lostDate = lostDate;
         this.lostAddress = lostAddress;
-        this.owner = owner;
+        this.ownerId = ownerId;
     }
 
     public String getEmi() {
@@ -75,19 +77,19 @@ public class Diary {
         this.brand = brand;
     }
 
-    public Timestamp getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Timestamp createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Timestamp getLostDate() {
+    public Date getLostDate() {
         return lostDate;
     }
 
-    public void setLostDate(Timestamp lostDate) {
+    public void setLostDate(Date lostDate) {
         this.lostDate = lostDate;
     }
 
@@ -99,11 +101,11 @@ public class Diary {
         this.lostAddress = lostAddress;
     }
 
-    public User getOwner() {
-        return owner;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setOwnerId(String owner) {
+        this.ownerId = owner;
     }
 }

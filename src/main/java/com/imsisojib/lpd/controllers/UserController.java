@@ -1,6 +1,5 @@
 package com.imsisojib.lpd.controllers;
 
-import com.imsisojib.lpd.models.entities.Address;
 import com.imsisojib.lpd.models.entities.Diary;
 import com.imsisojib.lpd.models.entities.User;
 import com.imsisojib.lpd.models.responses.Response;
@@ -11,17 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/diary")
-public class DiaryController {
+@RequestMapping("/api/user")
+public class UserController {
     @Autowired
     UserRepository userRepository;
 
@@ -31,25 +22,24 @@ public class DiaryController {
     @Autowired
     AddressRepository addressRepository;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createDiary(@RequestBody Diary diary) {
-        var result = diaryRepository.save(diary);
+    @PostMapping("/signup")
+    public ResponseEntity<?> signupUser(@RequestBody User user) {
+        var result = userRepository.save(user);
         return ResponseEntity.ok(
-                new Response<Diary>(
+                new Response(
                         "Successful!",
                         result
                 )
         );
     }
 
-    @GetMapping("/findAll")
-    public ResponseEntity<?> findAllDiary() {
+    @GetMapping("/allUsers")
+    public ResponseEntity<?> allUsers() {
         return ResponseEntity.ok(
                 new Response(
                         "Successful!",
-                        diaryRepository.findAll()
+                        userRepository.findAll()
                 )
         );
     }
-
 }
