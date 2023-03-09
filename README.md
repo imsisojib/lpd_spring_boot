@@ -210,3 +210,33 @@ TO CHANGE/DEFINE CUSTOM COLUMN_NAME:
 
 DONE.
 ```
+
+## REST API CALLING:
+```$xslt@Entity
+
+         //ADD DEPENDENCY
+         <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		
+         //IMPLEMENTATION
+         String url = "api_url";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth("Bearer token");
+
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Map> result = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                httpEntity,
+                Map[].class
+        );
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        var data = result.getBody();
+```
