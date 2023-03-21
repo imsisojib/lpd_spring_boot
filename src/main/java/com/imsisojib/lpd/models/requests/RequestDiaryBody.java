@@ -1,50 +1,28 @@
-package com.imsisojib.lpd.models.entities;
+package com.imsisojib.lpd.models.requests;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.imsisojib.lpd.models.entities.Address;
+import com.imsisojib.lpd.models.entities.User;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.sql.Date;
 
-@Entity
-@Table(name = "diaries", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "emi")
-})
-public class Diary {
-    @Id
-    @Size(min = 15, max = 15)
+public class RequestDiaryBody {
+
     private String emi;
     private String deviceName;
     private String modelName;
     private String brand;
-    @CreatedDate
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date createdDate;
+
     @JsonFormat(pattern = "dd-MM-yyyy")
     private Date lostDate;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_lost_address_id")
     private Address lostAddress;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_owner_id")
-    private User owner;
+    private String userId;
 
-    public Diary() {
-    }
 
-    public Diary(String emi, String deviceName, String modelName, String brand, Date lostDate, Address lostAddress, User owner) {
-        this.emi = emi;
-        this.deviceName = deviceName;
-        this.modelName = modelName;
-        this.brand = brand;
-        this.lostDate = lostDate;
-        this.lostAddress = lostAddress;
-        this.owner = owner;
-    }
 
     public String getEmi() {
         return emi;
@@ -78,14 +56,6 @@ public class Diary {
         this.brand = brand;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public Date getLostDate() {
         return lostDate;
     }
@@ -102,11 +72,21 @@ public class Diary {
         this.lostAddress = lostAddress;
     }
 
-    public User getOwner() {
-        return owner;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public RequestDiaryBody(String emi, String deviceName, String modelName, String brand, Date lostDate, Address lostAddress, String userId) {
+        this.emi = emi;
+        this.deviceName = deviceName;
+        this.modelName = modelName;
+        this.brand = brand;
+        this.lostDate = lostDate;
+        this.lostAddress = lostAddress;
+        this.userId = userId;
     }
 }

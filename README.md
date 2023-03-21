@@ -88,6 +88,8 @@ show databases ; // to see all database
 create database db_name ; // to create new database
 use database_name ; // to use database
 show tables ; // to show all tables within database
+drop table table_name; 
+drop database db_name; 
 ```
 
 ## Annotations in Spring Boot
@@ -176,6 +178,15 @@ CascadeType.REMOVE: When deleting an entity, it also deletes the entities held i
 CascadeType.REFRESH: When refreshing an entity, also refresh the entities held in this field.
 
 CascadeType.MERGE: When merging entity state, also merge the entities held in this field.
+
+```
+
+--> **What is 'FetchType'?** <br>
+```$xslt
+
+FetchType.Lazy: Only fetches required fields/columns that has Getter Method
+
+FetchType.Eager: Select all fields within an entity
 
 ```
 
