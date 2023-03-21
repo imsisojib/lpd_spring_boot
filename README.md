@@ -284,5 +284,11 @@ public class SwaggerConfig {
 }
 ```
 
+Update AndMatcher in Application.properties to retrieve all endpoints
+```$xslt@Entity
+#change spring to use antmatchers with configuring it in application.properties
+spring.mvc.pathmatch.matching-strategy = ANT_PATH_MATCHER
+```
+
 Output: http://localhost:8080/swagger-ui.html#/
 
