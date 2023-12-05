@@ -31,4 +31,8 @@ public class ServiceGeocodes {
     public List<Upazila> findAllUpazilas(){
         return repositoryUpazila.findAll();
     }
+
+    public List<Upazila> findUpazilasByDistrictId(Long districtId){
+        return repositoryUpazila.findUpazilasByDistrictId(districtId);
+    }
 }
