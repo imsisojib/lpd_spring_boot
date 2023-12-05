@@ -4,16 +4,16 @@ import com.imsisojib.lpd.features.account.models.entities.User;
 import com.imsisojib.lpd.core.models.Response;
 import com.imsisojib.lpd.features.account.repositories.AddressRepository;
 import com.imsisojib.lpd.features.lost_diary.repositories.DiaryRepository;
-import com.imsisojib.lpd.features.account.repositories.UserRepository;
+import com.imsisojib.lpd.features.account.repositories.RepositoryUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-public class UserController {
+public class ControllerAccount {
     @Autowired
-    UserRepository userRepository;
+    RepositoryUser repositoryUser;
 
     @Autowired
     DiaryRepository diaryRepository;
@@ -23,7 +23,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signupUser(@RequestBody User user) {
-        var result = userRepository.save(user);
+        var result = repositoryUser.save(user);
         return ResponseEntity.ok(
                 new Response(
                         "Successful!",
@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok(
                 new Response(
                         "Successful!",
-                        userRepository.findAll()
+                        repositoryUser.findAll()
                 )
         );
     }

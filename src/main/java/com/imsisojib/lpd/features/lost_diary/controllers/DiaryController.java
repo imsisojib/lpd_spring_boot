@@ -8,7 +8,7 @@ import com.imsisojib.lpd.core.models.Response;
 import com.imsisojib.lpd.features.account.repositories.AddressRepository;
 import com.imsisojib.lpd.features.lost_diary.repositories.DiaryRepository;
 import com.imsisojib.lpd.features.search.repositories.SearchLogsRepository;
-import com.imsisojib.lpd.features.account.repositories.UserRepository;
+import com.imsisojib.lpd.features.account.repositories.RepositoryUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ import java.util.*;
 @RequestMapping("/api/diary")
 public class DiaryController {
     @Autowired
-    UserRepository userRepository;
+    RepositoryUser repositoryUser;
 
     @Autowired
     DiaryRepository diaryRepository;
@@ -33,7 +33,7 @@ public class DiaryController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createDiary(@RequestBody Diary.RequestDiaryBody diaryBody) {
-        Optional<User> user = userRepository.findById(diaryBody.getUserId());
+        Optional<User> user = repositoryUser.findById(diaryBody.getUserId());
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().body(
                     new Response(
@@ -81,7 +81,7 @@ public class DiaryController {
     public ResponseEntity<?> searchDiaryByEmi(@RequestParam final String emi, @RequestParam final String userId, @RequestParam final String searchByPhoneEmi) {
 
         Optional<Diary> data = diaryRepository.findById(emi);
-        Optional<User> userData = userRepository.findById(userId);
+        Optional<User> userData = repositoryUser.findById(userId);
 
         if (data.isEmpty()) {
             SearchLogs searchLogs = new SearchLogs();

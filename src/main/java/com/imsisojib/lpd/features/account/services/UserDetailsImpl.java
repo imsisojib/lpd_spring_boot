@@ -7,7 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 
 public class UserDetailsImpl implements UserDetails {
-    private static final long serialVersionUID = 1L;
+
+    private Long id;
     private String phoneNumber;
 
     private String email;
@@ -15,7 +16,8 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String phoneNumber, String email, String name, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id,String name,String phoneNumber, String email, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.name = name;
@@ -29,10 +31,12 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         return new UserDetailsImpl(
-                user.getPhoneNumber(),
+                user.getId(),
                 user.getName(),
+                user.getPhoneNumber(),
                 user.getEmail(),
-                authorities);
+                authorities
+        );
     }
 
     @Override
@@ -90,5 +94,13 @@ public class UserDetailsImpl implements UserDetails {
             return false;
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(phoneNumber, user.phoneNumber);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
