@@ -1,10 +1,8 @@
 package com.imsisojib.lpd.features.geocodes.controllers;
 
 import com.imsisojib.lpd.core.models.Response;
-import com.imsisojib.lpd.features.account.models.entities.User;
 import com.imsisojib.lpd.features.geocodes.services.ServiceGeocodes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
