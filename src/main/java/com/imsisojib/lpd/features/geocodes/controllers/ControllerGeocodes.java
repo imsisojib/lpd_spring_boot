@@ -6,6 +6,7 @@ import com.imsisojib.lpd.features.geocodes.services.ServiceGeocodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,18 +27,26 @@ public class ControllerGeocodes {
     }
 
     @GetMapping("/districts")
-    public ResponseEntity<?> findAllDistricts() {
+    public ResponseEntity<?> findAllDistricts(@RequestParam("divisionId") @Nullable Long divisionId) {
+        if(divisionId==null){
+            return ResponseEntity.ok(
+                    new Response(
+                            "Successful!",
+                            serviceGeocodes.findAllDistricts()
+                    )
+            );
+        }
 
         return ResponseEntity.ok(
                 new Response(
                         "Successful!",
-                        serviceGeocodes.findAllDistricts()
+                        serviceGeocodes.findDistrictsByDivisionId(divisionId)
                 )
         );
     }
 
     @GetMapping("/upazilas")
-    public ResponseEntity<?> findAllUpazilas(@RequestParam("districtId") Long districtId) {
+    public ResponseEntity<?> findAllUpazilas(@RequestParam("districtId") @Nullable Long districtId) {
 
         if(districtId==null){
             return ResponseEntity.ok(
