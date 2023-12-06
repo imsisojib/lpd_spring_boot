@@ -1,7 +1,6 @@
 package com.imsisojib.lpd.core.security;
 
 import com.imsisojib.lpd.core.security.authentication_providers.CustomSocialAuthenticationProvider;
-import com.imsisojib.lpd.core.security.authentication_providers.CustomSocialAuthenticationToken;
 import com.imsisojib.lpd.core.security.jwt.AuthEntryPointJwt;
 import com.imsisojib.lpd.core.security.jwt.AuthTokenFilter;
 import com.imsisojib.lpd.features.account.services.UserDetailsServiceImpl;
@@ -10,8 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
