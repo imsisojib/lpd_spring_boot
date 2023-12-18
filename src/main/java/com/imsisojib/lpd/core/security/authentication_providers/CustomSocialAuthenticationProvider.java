@@ -1,5 +1,8 @@
 package com.imsisojib.lpd.core.security.authentication_providers;
 
+import com.imsisojib.lpd.features.account.enums.EAuthType;
+import com.imsisojib.lpd.features.account.enums.ERole;
+import com.imsisojib.lpd.features.account.models.entities.Role;
 import com.imsisojib.lpd.features.account.models.entities.User;
 import com.imsisojib.lpd.features.account.models.responses.ResponseGoogleTokenInfo;
 import com.imsisojib.lpd.features.account.services.UserDetailsServiceImpl;
@@ -14,6 +17,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 public class CustomSocialAuthenticationProvider implements AuthenticationProvider {
@@ -31,6 +38,18 @@ public class CustomSocialAuthenticationProvider implements AuthenticationProvide
          //GOOGLE
          if (authentication instanceof GoogleAuthenticationToken) {
              GoogleAuthenticationToken googleToken = (GoogleAuthenticationToken) authentication;
+
+             //test if it is test account
+             if(googleToken.getAccessToken().equals("tester@google.com")){
+                 //authenticate manually
+                 ResponseGoogleTokenInfo googleAccountInfo = new ResponseGoogleTokenInfo();
+                 googleAccountInfo.setEmail("tester@google.com");
+                 googleAccountInfo.setName("Tester Google");
+                 googleAccountInfo.setPhone("");
+                 UserDetails userDetails = createGoogleAuthenticatedUser(googleAccountInfo);
+                 return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+             }
+
              ResponseGoogleTokenInfo googleAccountInfo;
              String tokenInfoUrl = googleAccessTokenValidator + googleToken.getAccessToken();
 
@@ -50,19 +69,7 @@ public class CustomSocialAuthenticationProvider implements AuthenticationProvide
                  return  null;
              }
 
-             var userExists = userDetailsService.findUserByEmail(googleAccountInfo.getEmail());
-             if(userExists.isEmpty()){
-                 //means no user found
-                 //just save the user and return as authenticated
-                 User newUser = new User();
-                 newUser.setName(googleAccountInfo.getName());
-                 newUser.setEmail(googleAccountInfo.getEmail());
-                 userDetailsService.saveUser(newUser);
-             }
-
-             // Perform authentication using the social provider (Facebook, Google, etc.)
-             // Set authenticated user details in a new Authentication object
-             UserDetails userDetails = userDetailsService.findUserDetailsByEmail(googleAccountInfo.getEmail());
+             UserDetails userDetails = createGoogleAuthenticatedUser(googleAccountInfo);
              return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
          }
 
@@ -72,6 +79,40 @@ public class CustomSocialAuthenticationProvider implements AuthenticationProvide
     @Override
     public boolean supports(Class<?> authentication) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+    }
+
+    private UserDetails createGoogleAuthenticatedUser(ResponseGoogleTokenInfo googleAccountInfo){
+        var userExists = userDetailsService.findUserByEmail(googleAccountInfo.getEmail());
+        if(userExists.isEmpty()){
+            //means new user
+            //just save the user and return as authenticated
+            User newUser = new User();
+            newUser.setName(googleAccountInfo.getName());
+            newUser.setEmail(googleAccountInfo.getEmail());
+            newUser.setPhoneNumber(googleAccountInfo.getPhone());
+            newUser.setAuthType(EAuthType.google.name());
+            newUser.setJoiningDate(LocalDateTime.now());
+            newUser.setLastLoggedInDate(LocalDateTime.now());
+
+            //set user role
+            Set<Role> roles = new HashSet<>();
+            Role userRole = userDetailsService.findRoleByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+            newUser.setRoles(roles);
+
+            userDetailsService.saveUser(newUser);
+        }else{
+            //means user already exists
+            User existingUser = userExists.get();
+            existingUser.setLastLoggedInDate(LocalDateTime.now());
+            existingUser.setAuthType(EAuthType.google.name());
+            userDetailsService.saveUser(existingUser);
+        }
+
+        // Perform authentication using the social provider (Facebook, Google, etc.)
+        // Set authenticated user details in a new Authentication object
+        return userDetailsService.findUserDetailsByEmail(googleAccountInfo.getEmail());
     }
 }
 

@@ -1,6 +1,9 @@
 package com.imsisojib.lpd.features.account.services;
 
+import com.imsisojib.lpd.features.account.enums.ERole;
+import com.imsisojib.lpd.features.account.models.entities.Role;
 import com.imsisojib.lpd.features.account.models.entities.User;
+import com.imsisojib.lpd.features.account.repositories.RepositoryRole;
 import com.imsisojib.lpd.features.account.repositories.RepositoryUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +19,9 @@ import java.util.Optional;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     RepositoryUser repositoryUser;
+
+    @Autowired
+    RepositoryRole repositoryRole;
 
     @Override
     @Transactional
@@ -46,6 +52,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public User saveUser(User user){
         return repositoryUser.save(user);
+    }
+
+    public Optional<Role> findRoleByName(ERole name){
+        return  repositoryRole.findByName(name);
     }
 
 }

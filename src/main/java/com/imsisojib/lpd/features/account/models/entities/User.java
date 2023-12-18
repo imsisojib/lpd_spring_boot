@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +29,19 @@ public class User {
     private String name;
     @Column(unique = true)
     private String email;
+
+    @Column(name = "last_logged_in_date")
+    private LocalDateTime lastLoggedInDate;
+    @Column(name = "joining_date")
+    private LocalDateTime joiningDate;
+    @Column(name = "auth_type")
+    private String authType;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(  name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_address_id", referencedColumnName = "id")
