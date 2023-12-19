@@ -7,7 +7,7 @@ import com.imsisojib.lpd.features.geocodes.repositories.RepositoryDistrict;
 import com.imsisojib.lpd.features.geocodes.repositories.RepositoryDivision;
 import com.imsisojib.lpd.features.geocodes.repositories.RepositoryUpazila;
 import com.imsisojib.lpd.features.lost_diary.models.requests.RequestDiaryBody;
-import com.imsisojib.lpd.features.search.enums.EnumSearchStatus;
+import com.imsisojib.lpd.features.search.enums.ESearchStatus;
 import com.imsisojib.lpd.features.lost_diary.models.entities.Diary;
 import com.imsisojib.lpd.features.search.models.entities.SearchLogs;
 import com.imsisojib.lpd.features.account.models.entities.User;
@@ -17,17 +17,12 @@ import com.imsisojib.lpd.features.lost_diary.repositories.DiaryRepository;
 import com.imsisojib.lpd.features.search.repositories.SearchLogsRepository;
 import com.imsisojib.lpd.features.account.repositories.RepositoryUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Role;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.Date;
 import java.util.*;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
@@ -131,17 +126,32 @@ public class DiaryController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchDiaryByEmi(@RequestParam final String emi, @RequestParam final String userId, @RequestParam final String searchByPhoneEmi) {
+    public ResponseEntity<?> searchDiaryByEmi(@RequestParam final String emi, @RequestParam final String searchByPhoneEmi) {
 
-        Optional<Diary> data = diaryRepository.findById(emi);
-        Optional<User> userData = repositoryUser.findById(userId);
+        Long userId;
+        try{
+            // Get the Authentication object from the security context
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            userId = userDetails.getId();
+        }catch (Exception e){
+            return ResponseEntity.status(404).body(
+                    new Response<Diary>(
+                            "You are not allowed to perform this action. Please login first!",
+                            null
+                    )
+            );
+        }
+
+        Optional<Diary> data = diaryRepository.findDiaryByEmi(emi);
+        Optional<User> userData = repositoryUser.findUserById(userId);
 
         if (data.isEmpty()) {
             SearchLogs searchLogs = new SearchLogs();
             searchLogs.setSearchedEmi(emi);
             userData.ifPresent(searchLogs::setSearchByUserId);
             searchLogs.setSearchByPhoneEmi(searchByPhoneEmi);
-            searchLogs.setStatus(EnumSearchStatus.NOT_FOUND.getValue());
+            searchLogs.setStatus(ESearchStatus.NOT_FOUND.getValue());
             searchLogsRepository.save(searchLogs);
 
             return ResponseEntity.status(404).body(new Response<>(
@@ -154,7 +164,7 @@ public class DiaryController {
             searchLogs.setSearchedEmi(emi);
             userData.ifPresent(searchLogs::setSearchByUserId);
             searchLogs.setSearchByPhoneEmi(searchByPhoneEmi);
-            searchLogs.setStatus(EnumSearchStatus.FOUND.getValue());
+            searchLogs.setStatus(ESearchStatus.FOUND.getValue());
             searchLogsRepository.save(searchLogs);
 
             return ResponseEntity.status(200).body(new Response<>(

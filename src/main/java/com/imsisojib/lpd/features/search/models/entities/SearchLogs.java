@@ -15,8 +15,9 @@ public class SearchLogs {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User searchByUserId;
+    @Column(name = "search_by_phone_emi")
     String searchByPhoneEmi;
-    int status; //Will determine by SearchStatus table
+    int status; //Will determine by ESearchStatus
 
     public SearchLogs() {
     }

@@ -1,5 +1,6 @@
 package com.imsisojib.lpd.features.lost_diary.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.imsisojib.lpd.features.account.models.entities.User;
 import com.imsisojib.lpd.features.geocodes.models.entities.Address;
 import lombok.AllArgsConstructor;
@@ -32,10 +33,12 @@ public class Diary {
     private String brand;
     @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "created_date")
     private LocalDateTime createdDate;
     @Column(name = "lost_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime lostDate;
 
     @OneToOne(cascade = CascadeType.ALL)

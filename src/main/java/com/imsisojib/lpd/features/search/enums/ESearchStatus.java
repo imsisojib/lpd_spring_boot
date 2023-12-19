@@ -1,13 +1,13 @@
 package com.imsisojib.lpd.features.search.enums;
 
-public enum EnumSearchStatus {
+public enum ESearchStatus {
     NOT_FOUND (1),
     FOUND (2),
-    FOUND_BUT_LIMIT (3);
+    FOUND_BUT_LIMIT (3);    //user has limited search access
 
     private final int value;
 
-    EnumSearchStatus(final int newValue){
+    ESearchStatus(final int newValue){
         value = newValue;
     }
 
