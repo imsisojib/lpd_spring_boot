@@ -222,6 +222,47 @@ TO CHANGE/DEFINE CUSTOM COLUMN_NAME:
 DONE.
 ```
 
+### JoinColumn vs JoinTable
+In Spring Boot, @JoinTable and @JoinColumn are annotations used in the context of defining relationships between entities when working with JPA (Java Persistence API) and Hibernate. They are used to specify how the tables corresponding to the entities should be mapped in the database.
+
+@JoinTable:
+
+@JoinTable is used to define the association table for a many-to-many relationship between two entities.
+It is typically used when you have a relationship where one entity can be associated with multiple instances of another entity, and vice versa.
+It is applied on the owning side of the relationship, and it helps define the properties of the join table, such as the table name, the columns representing the foreign keys, etc.
+
+```$xslt
+  @Entity
+  public class Student {
+  @ManyToMany
+  @JoinTable(
+   name = "student_course",
+   joinColumns = @JoinColumn(name = "student_id"),
+   inverseJoinColumns = @JoinColumn(name = "course_id")
+   )
+   private Set<Course> courses;
+   // other fields and methods
+  }
+```
+
+@JoinColumn
+
+@JoinColumn is used to specify the details of a column that will be used to join an entity to another entity.
+It is often used in combination with @ManyToOne or @OneToOne annotations to define the column name, whether it is nullable, and other properties of the foreign key column in the database.
+```$xslt
+@Entity
+public class Course {
+@ManyToOne
+@JoinColumn(name = "instructor_id", nullable = false)
+private Instructor instructor;
+// other fields and methods
+}
+```
+
+In this example, the @JoinColumn annotation is used to specify that the instructor_id column in the Course table is the foreign key column that links it to the Instructor table.
+
+In summary, @JoinTable is used for many-to-many relationships to define the association table, while @JoinColumn is used to specify the details of a foreign key column in a relationship, often in the context of @ManyToOne or @OneToOne relationships.
+
 ## REST API CALLING:
 ```$xslt@Entity
 

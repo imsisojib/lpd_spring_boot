@@ -3,29 +3,42 @@ package com.imsisojib.lpd.features.lost_diary.models.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.imsisojib.lpd.features.account.models.entities.User;
 import com.imsisojib.lpd.features.geocodes.models.entities.Address;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
-@Table(name = "diaries", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "emi")
-})
+@Table(name = "diaries")
 public class Diary {
     @Id
-    @Size(min = 15, max = 15)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Size(max = 30)
     private String emi;
     private String deviceName;
     private String modelName;
     private String brand;
     @CreatedDate
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date createdDate;
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date lostDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
+    @Column(name = "lost_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime lostDate;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_lost_address_id")
@@ -33,12 +46,9 @@ public class Diary {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_owner_id")
-    private User owner;
+    private User owner; //means many diaries will have same User
 
-    public Diary() {
-    }
-
-    public Diary(String emi, String deviceName, String modelName, String brand, Date lostDate, Address lostAddress, User owner) {
+    public Diary(String emi, String deviceName, String modelName, String brand, LocalDateTime lostDate, Address lostAddress, User owner) {
         this.emi = emi;
         this.deviceName = deviceName;
         this.modelName = modelName;
@@ -46,151 +56,6 @@ public class Diary {
         this.lostDate = lostDate;
         this.lostAddress = lostAddress;
         this.owner = owner;
-    }
-
-    public String getEmi() {
-        return emi;
-    }
-
-    public void setEmi(String emi) {
-        this.emi = emi;
-    }
-
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
-    }
-
-    public String getModelName() {
-        return modelName;
-    }
-
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getLostDate() {
-        return lostDate;
-    }
-
-    public void setLostDate(Date lostDate) {
-        this.lostDate = lostDate;
-    }
-
-    public Address getLostAddress() {
-        return lostAddress;
-    }
-
-    public void setLostAddress(Address lostAddress) {
-        this.lostAddress = lostAddress;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public static class RequestDiaryBody {
-
-        private String emi;
-        private String deviceName;
-        private String modelName;
-        private String brand;
-
-        @JsonFormat(pattern = "dd-MM-yyyy")
-        private Date lostDate;
-        private Address lostAddress;
-
-        private String userId;
-
-
-
-        public String getEmi() {
-            return emi;
-        }
-
-        public void setEmi(String emi) {
-            this.emi = emi;
-        }
-
-        public String getDeviceName() {
-            return deviceName;
-        }
-
-        public void setDeviceName(String deviceName) {
-            this.deviceName = deviceName;
-        }
-
-        public String getModelName() {
-            return modelName;
-        }
-
-        public void setModelName(String modelName) {
-            this.modelName = modelName;
-        }
-
-        public String getBrand() {
-            return brand;
-        }
-
-        public void setBrand(String brand) {
-            this.brand = brand;
-        }
-
-        public Date getLostDate() {
-            return lostDate;
-        }
-
-        public void setLostDate(Date lostDate) {
-            this.lostDate = lostDate;
-        }
-
-        public Address getLostAddress() {
-            return lostAddress;
-        }
-
-        public void setLostAddress(Address lostAddress) {
-            this.lostAddress = lostAddress;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
-
-        public RequestDiaryBody(String emi, String deviceName, String modelName, String brand, Date lostDate, Address lostAddress, String userId) {
-            this.emi = emi;
-            this.deviceName = deviceName;
-            this.modelName = modelName;
-            this.brand = brand;
-            this.lostDate = lostDate;
-            this.lostAddress = lostAddress;
-            this.userId = userId;
-        }
+        this.createdDate = LocalDateTime.now();
     }
 }

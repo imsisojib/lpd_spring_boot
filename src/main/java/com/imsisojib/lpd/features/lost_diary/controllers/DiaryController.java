@@ -1,5 +1,12 @@
 package com.imsisojib.lpd.features.lost_diary.controllers;
 
+import com.imsisojib.lpd.features.account.enums.EAddressType;
+import com.imsisojib.lpd.features.account.services.UserDetailsImpl;
+import com.imsisojib.lpd.features.geocodes.models.entities.Address;
+import com.imsisojib.lpd.features.geocodes.repositories.RepositoryDistrict;
+import com.imsisojib.lpd.features.geocodes.repositories.RepositoryDivision;
+import com.imsisojib.lpd.features.geocodes.repositories.RepositoryUpazila;
+import com.imsisojib.lpd.features.lost_diary.models.requests.RequestDiaryBody;
 import com.imsisojib.lpd.features.search.enums.EnumSearchStatus;
 import com.imsisojib.lpd.features.lost_diary.models.entities.Diary;
 import com.imsisojib.lpd.features.search.models.entities.SearchLogs;
@@ -11,8 +18,13 @@ import com.imsisojib.lpd.features.search.repositories.SearchLogsRepository;
 import com.imsisojib.lpd.features.account.repositories.RepositoryUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.util.*;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
@@ -27,34 +39,71 @@ public class DiaryController {
 
     @Autowired
     AddressRepository addressRepository;
+    @Autowired
+    RepositoryDivision repositoryDivision;
+    @Autowired
+    RepositoryDistrict repositoryDistrict;
+    @Autowired
+    RepositoryUpazila repositoryUpazila;
 
     @Autowired
     SearchLogsRepository searchLogsRepository;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createDiary(@RequestBody Diary.RequestDiaryBody diaryBody) {
-        Optional<User> user = repositoryUser.findById(diaryBody.getUserId());
-        if (user.isEmpty()) {
-            return ResponseEntity.badRequest().body(
-                    new Response(
+    public ResponseEntity<?> createDiary(@RequestBody RequestDiaryBody diaryBody) {
+        Long userId;
+        try{
+            // Get the Authentication object from the security context
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            userId = userDetails.getId();
+        }catch (Exception e){
+            return ResponseEntity.status(404).body(
+                    new Response<Diary>(
                             "Invalid user ID found!",
                             null
                     )
             );
         }
+
+
+
+
+        Optional<User> user = repositoryUser.findUserById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    new Response<Diary>(
+                            "Invalid user ID found!",
+                            null
+                    )
+            );
+        }
+
+        //check Address information
+        Address address = new Address();
+        try{
+            address.setDivisionId(diaryBody.getDivisionId());
+            address.setDistrictId(diaryBody.getDistrictId());
+            address.setUpazilaId(diaryBody.getUpazilaId());
+        }catch (Exception e){
+            //need to specify proper validation if division, district, upazila is mandatory
+        }
+        address.setDetails(diaryBody.getLostAddressDetails());
+        address.setAddressType(EAddressType.ADDRESS_DIARY.name());
+
         var result = diaryRepository.save(new Diary(
                 diaryBody.getEmi(),
                 diaryBody.getDeviceName(),
                 diaryBody.getModelName(),
                 diaryBody.getBrand(),
                 diaryBody.getLostDate(),
-                diaryBody.getLostAddress(),
+                address,
                 user.get()
 
         ));
         return ResponseEntity.ok(
                 new Response<Diary>(
-                        "Successful!",
+                        "Your lost diary is saved successfully!",
                         result
                 )
         );

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,12 +19,18 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "division_id")
+    @JoinColumn(name = "division_id")
     private Long divisionId;
-    @Column(name = "district_id")
+
+    @JoinColumn(name = "district_id")
     private Long districtId;
-    @Column(name = "upazila_id")
+
+    @JoinColumn(name = "upazila_id")
     private Long upazilaId;
+
+    @Column(name = "address_type")
+    @NotNull
+    private String addressType; //use EAddressType name
 
     private String details;
 
