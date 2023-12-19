@@ -17,7 +17,10 @@ import com.imsisojib.lpd.features.lost_diary.repositories.DiaryRepository;
 import com.imsisojib.lpd.features.search.repositories.SearchLogsRepository;
 import com.imsisojib.lpd.features.account.repositories.RepositoryUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Role;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -110,6 +113,7 @@ public class DiaryController {
     }
 
     @GetMapping("/findAll")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> findAllDiary() {
         List<Diary> data;
         try {

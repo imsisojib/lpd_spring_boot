@@ -1,13 +1,11 @@
 package com.imsisojib.lpd.features.lost_diary.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.imsisojib.lpd.features.account.models.entities.User;
 import com.imsisojib.lpd.features.geocodes.models.entities.Address;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
