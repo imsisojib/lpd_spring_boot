@@ -68,7 +68,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests()
-                    .antMatchers("/api/auth/**","/api/geocodes/**","/swagger-ui.html", "/swagger-resources/**","/webjars/**","/v2/api-docs")
+                    .antMatchers("/api/auth/**","/api/geocodes/**")
                     .permitAll()
                     .and()
                 .authorizeRequests()
@@ -81,7 +81,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         //http.addFilterBefore(authenticationJwtTokenFilter(), CustomSocialAuthenticationToken.class);
-        //http.httpBasic();
+        http.httpBasic();
 
         return http.build();
     }
